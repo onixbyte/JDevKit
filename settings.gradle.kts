@@ -32,3 +32,5 @@ include(
     "property-guard-spring-boot-starter",
     "simple-serial-spring-boot-starter"
 )
+
+include("icalendar")
