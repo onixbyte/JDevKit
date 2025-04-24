@@ -17,6 +17,10 @@
 
 package com.onixbyte.jwt;
 
+import com.onixbyte.jwt.constant.Algorithm;
+
+import java.security.interfaces.RSAPrivateKey;
+
 /**
  * Interface for creating and signing JSON Web Tokens (JWTs).
  * <p>
@@ -42,5 +46,29 @@ public interface TokenCreator {
      *                                  configuration issues
      */
     String sign(TokenPayload payload);
+
+    static HmacTokenCreator hs256(String issuer, String secret) {
+        return new HmacTokenCreator(Algorithm.HS256, issuer, secret);
+    }
+
+    static HmacTokenCreator hs384(String issuer, String secret) {
+        return new HmacTokenCreator(Algorithm.HS384, issuer, secret);
+    }
+
+    static HmacTokenCreator hs512(String issuer, String secret) {
+        return new HmacTokenCreator(Algorithm.HS512, issuer, secret);
+    }
+
+    static RsaTokenCreator rs256(String issuer, RSAPrivateKey privateKey) {
+        return new RsaTokenCreator(Algorithm.RS256, issuer, privateKey);
+    }
+
+    static RsaTokenCreator rs384(String issuer, RSAPrivateKey privateKey) {
+        return new RsaTokenCreator(Algorithm.RS384, issuer, privateKey);
+    }
+
+    static RsaTokenCreator rs512(String issuer, RSAPrivateKey privateKey) {
+        return new RsaTokenCreator(Algorithm.RS512, issuer, privateKey);
+    }
 
 }

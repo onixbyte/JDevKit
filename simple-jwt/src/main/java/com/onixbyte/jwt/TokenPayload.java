@@ -342,7 +342,7 @@ public class TokenPayload {
      *
      * @return a map containing the JWT payload
      */
-    public Map<String, Object> getPayload() {
+    public Map<String, Object> getPayloadAsMap() {
         var _payload = new HashMap<>(payload);
 
         Optional.of(audiences)

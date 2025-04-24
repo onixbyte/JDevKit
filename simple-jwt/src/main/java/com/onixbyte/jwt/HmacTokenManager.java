@@ -15,14 +15,10 @@
  * limitations under the License.
  */
 
-package com.onixbyte.jwt.impl;
+package com.onixbyte.jwt;
 
 import com.onixbyte.devkit.utils.MapUtil;
 import com.onixbyte.devkit.utils.ObjectMapAdapter;
-import com.onixbyte.jwt.TokenCreator;
-import com.onixbyte.jwt.TokenManager;
-import com.onixbyte.jwt.TokenPayload;
-import com.onixbyte.jwt.TokenResolver;
 import com.onixbyte.jwt.constant.Algorithm;
 
 import java.util.Map;

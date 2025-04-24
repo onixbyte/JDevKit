@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-package com.onixbyte.jwt.impl;
+package com.onixbyte.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.onixbyte.jwt.TokenResolver;
 import com.onixbyte.jwt.constant.Algorithm;
 import com.onixbyte.jwt.constant.RegisteredClaims;
 import com.onixbyte.jwt.holder.ObjectMapperHolder;
