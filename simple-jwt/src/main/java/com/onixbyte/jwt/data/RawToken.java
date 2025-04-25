@@ -29,9 +29,40 @@ package com.onixbyte.jwt.data;
  * @param signature the Base64 URL-encoded signature string of the JWT
  * @author zihluwang
  */
-public record RawTokenComponent(
+public record RawToken(
         String header,
         String payload,
         String signature
 ) {
+    public static RawTokenBuilder builder() {
+        return new RawTokenBuilder();
+    }
+
+    public static class RawTokenBuilder {
+        private String header;
+        private String payload;
+        private String signature;
+
+        private RawTokenBuilder() {
+        }
+
+        public RawTokenBuilder header(String header) {
+            this.header = header;
+            return this;
+        }
+
+        public RawTokenBuilder payload(String payload) {
+            this.payload = payload;
+            return this;
+        }
+
+        public RawTokenBuilder signature(String signature) {
+            this.signature = signature;
+            return this;
+        }
+
+        public RawToken build() {
+            return new RawToken(header, payload, signature);
+        }
+    }
 }

@@ -29,38 +29,21 @@ public class EcdsaTokenCreator extends AbstractTokenCreator {
 
     private final ECPrivateKey privateKey;
 
-    /**
-     * Constructs an RSA token creator with the specified algorithm, issuer, and private key.
-     *
-     * @param algorithm  the RSA algorithm to use for signing (e.g., RS256, RS384, RS512)
-     * @param issuer     the issuer identifier to include in the token payload if not already present
-     * @param privateKey the private key, used to generate the RSA signature
-     * @throws IllegalArgumentException if the key is shorter than the minimum required
-     *                                 length for the specified algorithm
-     */
     public EcdsaTokenCreator(Algorithm algorithm, String issuer, ECPrivateKey privateKey) {
         super(algorithm, issuer);
 
-        var minKeyBitLength = algorithm.getShaLength();
-        var keyBitLength = privateKey.getParams().getCurve().getField().getFieldSize();
-        if (keyBitLength < minKeyBitLength) {
+        var _minKeyLength = algorithm.getShaLength();
+        var keyLength = privateKey.getParams().getCurve().getField().getFieldSize();
+        if (keyLength < _minKeyLength) {
             throw new IllegalArgumentException(
                     "EC key too small for ES%d: minimum %d bits required, got %d bits."
-                            .formatted(algorithm.getShaLength(), minKeyBitLength, keyBitLength)
+                            .formatted(algorithm.getShaLength(), _minKeyLength, keyLength)
             );
         }
 
         this.privateKey = privateKey;
     }
 
-    /**
-     * Generates an RSA signature for the given header and payload.
-     *
-     * @param encodedHeader  the Base64URL-encoded header bytes
-     * @param encodedPayload the Base64URL-encoded payload bytes
-     * @return the RSA signature bytes
-     * @throws RuntimeException if signature generation fails due to cryptographic errors
-     */
     @Override
     protected byte[] generateSignature(byte[] encodedHeader, byte[] encodedPayload) {
         try {

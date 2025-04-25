@@ -20,6 +20,8 @@ package com.onixbyte.jwt;
 import com.onixbyte.devkit.utils.MapUtil;
 import com.onixbyte.devkit.utils.ObjectMapAdapter;
 import com.onixbyte.jwt.constant.Algorithm;
+import com.onixbyte.jwt.data.DecodedToken;
+import com.onixbyte.jwt.data.RawToken;
 
 import java.util.Map;
 
@@ -103,8 +105,13 @@ public class HmacTokenManager<T> implements TokenManager<T> {
      *                                  verification fails
      */
     @Override
-    public void verify(String token) {
-        tokenResolver.verify(token);
+    public DecodedToken verify(String token) {
+        return tokenResolver.verify(token);
+    }
+
+    @Override
+    public Map<String, String> getHeader(RawToken token) {
+        return tokenResolver.getHeader(token);
     }
 
     /**
@@ -120,6 +127,11 @@ public class HmacTokenManager<T> implements TokenManager<T> {
     @Override
     public Map<String, String> getHeader(String token) {
         return tokenResolver.getHeader(token);
+    }
+
+    @Override
+    public Map<String, Object> getPayload(RawToken token) {
+        return tokenResolver.getPayload(token);
     }
 
     /**

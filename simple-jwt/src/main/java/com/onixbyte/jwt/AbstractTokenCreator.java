@@ -81,10 +81,10 @@ public abstract class AbstractTokenCreator implements TokenCreator {
             var encodedPayload = Base64.getUrlEncoder().withoutPadding()
                     .encodeToString(objectMapper.writeValueAsBytes(payload.getPayloadAsMap()));
 
-            byte[] headerBytes = encodedHeader.getBytes(StandardCharsets.UTF_8);
-            byte[] payloadBytes = encodedPayload.getBytes(StandardCharsets.UTF_8);
+            var headerBytes = encodedHeader.getBytes(StandardCharsets.UTF_8);
+            var payloadBytes = encodedPayload.getBytes(StandardCharsets.UTF_8);
 
-            byte[] signatureBytes = generateSignature(headerBytes, payloadBytes);
+            var signatureBytes = generateSignature(headerBytes, payloadBytes);
             var signature = Base64.getUrlEncoder()
                     .withoutPadding()
                     .encodeToString(signatureBytes);

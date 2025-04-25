@@ -18,7 +18,8 @@
 package com.onixbyte.jwt;
 
 import com.onixbyte.jwt.constant.RegisteredClaims;
-import com.onixbyte.jwt.data.RawTokenComponent;
+import com.onixbyte.jwt.data.DecodedToken;
+import com.onixbyte.jwt.data.RawToken;
 
 import java.util.Map;
 
@@ -46,45 +47,20 @@ public interface TokenResolver {
      *                                  fails due to an invalid algorithm, key, or
      *                                  mismatched signature
      */
-    void verify(String token);
-
-    /**
-     * Retrieves the header claims from the provided JWT.
-     * <p>
-     * Decodes the Base64-encoded header and deserialises it into a map of strings.
-     *
-     * @param token the JWT string from which to extract the header
-     * @return a map containing the header claims as key-value pairs
-     * @throws IllegalArgumentException if the token is malformed or the header cannot be
-     *                                  deserialised due to invalid JSON format
-     */
-    Map<String, String> getHeader(String token);
-
-    /**
-     * Retrieves the payload claims from the provided JWT, excluding registered claims.
-     * <p>
-     * Decodes the Base64-encoded payload, deserialises it into a map, and removes any registered
-     * claims as defined in {@link RegisteredClaims}.
-     *
-     * @param token the JWT string from which to extract the payload
-     * @return a map containing the custom payload claims as key-value pairs
-     * @throws IllegalArgumentException if the token is malformed or the payload cannot be
-     *                                  deserialised due to invalid JSON format
-     */
-    Map<String, Object> getPayload(String token);
+    DecodedToken verify(String token);
 
     /**
      * Splits a JWT into its raw components: header, payload, and signature.
      * <p>
      * Provides a default implementation that separates the token string into its three parts using
-     * dot separators and returns them as a {@link RawTokenComponent}.
+     * dot separators and returns them as a {@link RawToken}.
      *
      * @param token the JWT string to split
-     * @return a {@link RawTokenComponent} containing the header, payload, and signature as strings
+     * @return a {@link RawToken} containing the header, payload, and signature as strings
      * @throws IllegalArgumentException if the token does not consist of exactly three parts
      *                                  separated by dots
      */
-    default RawTokenComponent splitToken(String token) {
+    default RawToken splitToken(String token) {
         var tokenTuple = token.split("\\.");
 
         if (tokenTuple.length != 3) {
@@ -92,7 +68,7 @@ public interface TokenResolver {
                     "The provided JWT is invalid: it must consist of exactly three parts separated by dots.");
         }
 
-        return new RawTokenComponent(tokenTuple[0], tokenTuple[1], tokenTuple[2]);
+        return new RawToken(tokenTuple[0], tokenTuple[1], tokenTuple[2]);
     }
 
 }

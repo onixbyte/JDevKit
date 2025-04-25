@@ -157,4 +157,54 @@ public final class CryptoUtil {
                 signatureBytes);
     }
 
+    /**
+     * Verify signature for JWT header and payload.
+     *
+     * @param algorithm      algorithm name.
+     * @param publicKey      algorithm public key.
+     * @param header         JWT header.
+     * @param payload        JWT payload.
+     * @param signatureBytes JWT signature.
+     * @return true if signature is valid.
+     * @throws NoSuchAlgorithmException if the algorithm is not supported.
+     * @throws InvalidKeyException      if the given key is inappropriate for initializing the specified algorithm.
+     */
+    public static boolean verifySignatureFor(
+            Algorithm algorithm,
+            PublicKey publicKey,
+            String header,
+            String payload,
+            byte[] signatureBytes
+    ) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        return verifySignatureFor(algorithm, publicKey, header.getBytes(StandardCharsets.UTF_8),
+                payload.getBytes(StandardCharsets.UTF_8), signatureBytes);
+    }
+
+    /**
+     * Verify signature for JWT header and payload using a public key.
+     *
+     * @param algorithm      algorithm name.
+     * @param publicKey      the public key to use for verification.
+     * @param headerBytes    JWT header.
+     * @param payloadBytes   JWT payload.
+     * @param signatureBytes JWT signature.
+     * @return true if signature is valid.
+     * @throws NoSuchAlgorithmException if the algorithm is not supported.
+     * @throws InvalidKeyException      if the given key is inappropriate for initializing the specified algorithm.
+     */
+    public static boolean verifySignatureFor(
+            Algorithm algorithm,
+            PublicKey publicKey,
+            byte[] headerBytes,
+            byte[] payloadBytes,
+            byte[] signatureBytes
+    ) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        final var s = Signature.getInstance(algorithm.getAlgorithm());
+        s.initVerify(publicKey);
+        s.update(headerBytes);
+        s.update(JWT_PART_SEPARATOR);
+        s.update(payloadBytes);
+        return s.verify(signatureBytes);
+    }
+
 }
