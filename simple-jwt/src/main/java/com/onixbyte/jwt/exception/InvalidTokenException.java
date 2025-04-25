@@ -15,27 +15,18 @@
  * limitations under the License.
  */
 
-package com.onixbyte.jwt;
+package com.onixbyte.jwt.exception;
 
-import com.onixbyte.jwt.data.DecodedToken;
-import com.onixbyte.jwt.data.RawToken;
+public class InvalidTokenException extends RuntimeException {
 
-import java.util.Map;
-
-public class EcdsaTokenManager<T> implements TokenManager<T> {
-
-    @Override
-    public T extract(String token) {
-        return null;
+    public InvalidTokenException() {
     }
 
-    @Override
-    public String sign(TokenPayload payload) {
-        return "";
+    public InvalidTokenException(String message) {
+        super(message);
     }
 
-    @Override
-    public DecodedToken verify(String token) {
-        return null;
+    public InvalidTokenException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

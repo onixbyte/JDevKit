@@ -26,6 +26,7 @@ import com.onixbyte.jwt.constant.RegisteredClaims;
 import com.onixbyte.jwt.data.DecodedToken;
 import com.onixbyte.jwt.data.RawToken;
 import com.onixbyte.jwt.exception.AlgorithmMismatchException;
+import com.onixbyte.jwt.exception.InvalidTokenException;
 import com.onixbyte.jwt.exception.TokenDecodingException;
 import com.onixbyte.jwt.holder.ObjectMapperHolder;
 
@@ -38,9 +39,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Base implementation for JWT token resolvers. Handles common token parsing, decoding, and validation logic.
- */
 public abstract class AbstractTokenResolver implements TokenResolver {
 
     protected final Algorithm algorithm;
@@ -61,7 +59,7 @@ public abstract class AbstractTokenResolver implements TokenResolver {
             Map<String, Object> decodedPayload = decodePayload(rawToken.payload());
 
             // compose decoded token
-            DecodedToken decodedToken = DecodedToken.builder()
+            var decodedToken = DecodedToken.builder()
                     .header(decodedHeader)
                     .payload(decodedPayload)
                     .build();
@@ -77,29 +75,22 @@ public abstract class AbstractTokenResolver implements TokenResolver {
         }
     }
 
-    /**
-     * Decodes Base64URL-encoded header to a Map.
-     */
     protected Map<String, String> decodeHeader(String encodedHeader) throws JsonProcessingException {
         byte[] headerBytes = Base64.getUrlDecoder().decode(encodedHeader);
         String headerJson = new String(headerBytes, StandardCharsets.UTF_8);
-        return objectMapper.readValue(headerJson, new TypeReference<>() {});
+        return objectMapper.readValue(headerJson, new TypeReference<>() {
+        });
     }
 
-    /**
-     * Decodes Base64URL-encoded payload to a Map.
-     */
     protected Map<String, Object> decodePayload(String encodedPayload) throws JsonProcessingException {
         byte[] payloadBytes = Base64.getUrlDecoder().decode(encodedPayload);
         String payloadJson = new String(payloadBytes, StandardCharsets.UTF_8);
-        return objectMapper.readValue(payloadJson, new TypeReference<>() {});
+        return objectMapper.readValue(payloadJson, new TypeReference<>() {
+        });
     }
 
-    /**
-     * Verifies that the algorithm in the token matches the expected algorithm.
-     */
     protected void verifyAlgorithm(DecodedToken token, Algorithm expectedAlgorithm) {
-        String algorithmValue = token.header().get(HeaderClaims.ALGORITHM);
+        var algorithmValue = token.header().get(HeaderClaims.ALGORITHM);
         if (algorithmValue == null) {
             throw new AlgorithmMismatchException("No algorithm found in token header");
         }
@@ -115,9 +106,6 @@ public abstract class AbstractTokenResolver implements TokenResolver {
         }
     }
 
-    /**
-     * Verifies additional claims in the token (to be implemented by subclasses).
-     */
     protected void verifyClaims(DecodedToken token) {
         var claims = token.payload();
 
@@ -132,10 +120,10 @@ public abstract class AbstractTokenResolver implements TokenResolver {
             if (_notBefore instanceof Long notBefore) {
                 var nbfInstant = Instant.ofEpochSecond(notBefore);
                 if (nbfInstant.isBefore(now)) { // token not active
-                    throw new IllegalArgumentException();
+                    throw new InvalidTokenException("The provided token is not valid yet.");
                 }
             } else { // illegal format
-                throw new IllegalArgumentException();
+                throw new InvalidTokenException("The 'not before' claim must be a numeric value representing seconds since the Unix epoch.");
             }
         }
 
@@ -145,10 +133,10 @@ public abstract class AbstractTokenResolver implements TokenResolver {
             if (_expireAfter instanceof Long expireAfter) {
                 var expInstant = Instant.ofEpochSecond(expireAfter);
                 if (expInstant.isAfter(now)) { // token expired
-                    throw new IllegalArgumentException();
+                    throw new InvalidTokenException("The provided token is expired.");
                 }
             } else { // illegal format
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("The 'expire after' claim must be a numeric value representing seconds since the Unix epoch.");
             }
         }
     }

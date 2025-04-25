@@ -34,6 +34,7 @@ public record RawToken(
         String payload,
         String signature
 ) {
+
     public static RawTokenBuilder builder() {
         return new RawTokenBuilder();
     }

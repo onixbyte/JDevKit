@@ -24,9 +24,7 @@ import com.onixbyte.jwt.constant.RegisteredClaims;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public record DecodedToken(
         Map<String, String> header,
@@ -87,6 +85,13 @@ public record DecodedToken(
                 .orElse(null);
     }
 
+    public List<String> getAudiences() {
+        return Optional.ofNullable(payload)
+                .map((_payload) -> _payload.get(RegisteredClaims.AUDIENCE))
+                .map(DecodedToken::safeConvertObjectToStringList)
+                .orElse(null);
+    }
+
     public Map<String, Object> getClaims() {
         var customClaims = new HashMap<>(payload);
         RegisteredClaims.VALUES.forEach(customClaims::remove);
@@ -104,6 +109,44 @@ public record DecodedToken(
         } else {
             return null;
         }
+    }
+
+    private static List<String> safeConvertObjectToStringList(Object object) {
+        // check if the object is null or not a list
+        if (Objects.isNull(object) || !(object instanceof List<?> rawList)) {
+            return Collections.emptyList();
+        }
+
+        // check if the list is empty
+        if (rawList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // verify all elements are strings
+        for (Object element : rawList) {
+            if (Objects.nonNull(element) && !(element instanceof String)) {
+                return Collections.emptyList();
+            }
+        }
+
+        // safe cast to List<String>
+        // create a new list to store validated strings
+        var result = new ArrayList<String>(rawList.size());
+
+        // Validate and copy each element
+        for (var element : rawList) {
+            if (Objects.isNull(element)) {
+                // Optionally handle null elements (here, skip them)
+                continue;
+            }
+            if (!(element instanceof String)) {
+                // Non-string element detected, return empty list
+                return Collections.emptyList();
+            }
+            result.add((String) element);
+        }
+
+        return result;
     }
 
     private static LocalDateTime safeConvertNumberToLocalDateTime(Object object) {

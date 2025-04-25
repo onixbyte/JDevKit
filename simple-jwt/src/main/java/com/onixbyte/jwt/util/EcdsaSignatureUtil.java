@@ -107,15 +107,15 @@ public final class EcdsaSignatureUtil {
             throws SignatureException {
         final var ecNumberSize = shaLength >> 3;
 
-        // Check signature length
+        // check signature length
         if (joseSignature.length != ecNumberSize * 2) {
             throw new SignatureException("Invalid JOSE signature format: incorrect length");
         }
-        // Check if signature is all zeros
+        // check if signature is all zeros
         if (isAllZeros(joseSignature)) {
             throw new SignatureException("Invalid signature format: all zeros");
         }
-        // Extract R and S components
+        // extract R and S components
         var rBytes = new byte[ecNumberSize];
         System.arraycopy(joseSignature, 0, rBytes, 0, ecNumberSize);
         if (isAllZeros(rBytes)) {
@@ -126,7 +126,7 @@ public final class EcdsaSignatureUtil {
         if (isAllZeros(sBytes)) {
             throw new SignatureException("Invalid signature format: S component is all zeros");
         }
-        // Check resulting DER length
+        // check resulting DER length
         var rPadding = countPadding(joseSignature, 0, ecNumberSize);
         var sPadding = countPadding(joseSignature, ecNumberSize, joseSignature.length);
         var rLength = ecNumberSize - rPadding;
@@ -135,7 +135,7 @@ public final class EcdsaSignatureUtil {
         if (length > 255) {
             throw new SignatureException("Invalid JOSE signature format: resulting DER too large");
         }
-        // Verify R and S are less than curve order
+        // verify R and S are less than curve order
         var order = publicKey.getParams().getOrder();
         var r = new BigInteger(1, rBytes);
         var s = new BigInteger(1, sBytes);

@@ -17,11 +17,8 @@
 
 package com.onixbyte.jwt;
 
-import com.onixbyte.jwt.constant.RegisteredClaims;
 import com.onixbyte.jwt.data.DecodedToken;
 import com.onixbyte.jwt.data.RawToken;
-
-import java.util.Map;
 
 /**
  * Interface for resolving and verifying JSON Web Tokens (JWTs).
@@ -35,18 +32,6 @@ import java.util.Map;
  */
 public interface TokenResolver {
 
-    /**
-     * Verifies the signature of the provided JWT.
-     * <p>
-     * Splits the token into its components and checks the signature's validity using the
-     * implementation's configured algorithm and key. If the signature does not match, an exception
-     * is thrown.
-     *
-     * @param token the JWT string to verify
-     * @throws IllegalArgumentException if the token is malformed or the signature verification
-     *                                  fails due to an invalid algorithm, key, or
-     *                                  mismatched signature
-     */
     DecodedToken verify(String token);
 
     /**
